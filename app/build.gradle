@@ -1,0 +1,132 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'org.jetbrains.kotlin.kapt'
+}
+
+android {
+    compileSdk 31
+
+    defaultConfig {
+        applicationId "fr.tuttifruty.pokeapp"
+        minSdk 21
+        targetSdk 31
+        versionCode 1
+        versionName "1.0"
+
+        buildConfigField 'int', 'VERSION_DB', '1'
+        buildConfigField "String", "URL", "\"https://pokeapi.co/api/v2/\""
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+        useIR = true
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion compose_version
+        kotlinCompilerVersion '1.5.21'
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+
+    //Allow usage of JUnit5
+    testOptions {
+        unitTests.all {
+            useJUnitPlatform()
+        }
+    }
+}
+
+dependencies {
+    //Android
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation 'androidx.appcompat:appcompat:1.4.0'
+    implementation 'com.google.android.material:material:1.4.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
+    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0"
+
+    //Compose
+    implementation "androidx.compose.ui:ui:$compose_version"
+    implementation "androidx.compose.foundation:foundation:$compose_version"
+    implementation "androidx.compose.material:material:$compose_version"
+    implementation "androidx.compose.ui:ui-tooling:$compose_version"
+    implementation "androidx.compose.material:material-icons-core:$compose_version"
+    implementation "androidx.compose.material:material-icons-extended:$compose_version"
+    implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
+    implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
+    implementation 'androidx.activity:activity-compose:1.4.0'
+    implementation "androidx.constraintlayout:constraintlayout-compose:1.0.0-rc02"
+    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
+
+    //Image processing
+    implementation("io.coil-kt:coil:1.4.0")
+    //Image processing for Compose
+    implementation("io.coil-kt:coil-compose:1.4.0")
+
+    //Remote service
+    implementation "com.squareup.retrofit2:retrofit:2.9.0"
+    implementation "com.squareup.retrofit2:converter-moshi:2.9.0"
+    implementation "com.squareup.okhttp3:logging-interceptor:4.9.2"
+    implementation 'se.ansman.kotshi:api:2.6.3'
+    kapt 'se.ansman.kotshi:compiler:2.6.3'
+
+    //Local database
+    kapt "androidx.room:room-compiler:2.3.0"
+    implementation "androidx.room:room-runtime:2.3.0"
+    implementation "androidx.room:room-ktx:2.3.0"
+
+    //Dependencies Injections
+    implementation "io.insert-koin:koin-core:3.1.2"
+    implementation "io.insert-koin:koin-android:3.1.2"
+    //Dependencies Injection for Compose
+    implementation "io.insert-koin:koin-androidx-compose:3.1.2"
+
+    //Logging
+    implementation 'com.jakewharton.timber:timber:5.0.1'
+
+    //JUnit 5
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.8.1'
+    testImplementation "org.junit.jupiter:junit-jupiter-api:5.8.1"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.1"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.8.1"
+
+    //Coroutine Testing
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2"
+
+    //Mock
+    testImplementation "org.mockito:mockito-inline:3.12.4"
+    testImplementation "org.mockito:mockito-core:3.12.4"
+    //Mock for JUnit 5
+    testImplementation "org.mockito:mockito-junit-jupiter:3.12.4"
+
+    //UI + Context based Testing
+    androidTestImplementation('androidx.test:core:1.4.0')
+    androidTestImplementation('androidx.test:runner:1.4.0')
+    androidTestImplementation('androidx.test:rules:1.4.0')
+    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
+    androidTestImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.5.2"
+
+}
