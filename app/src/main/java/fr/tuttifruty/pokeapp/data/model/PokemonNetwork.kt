@@ -2,6 +2,7 @@ package fr.tuttifruty.pokeapp.data.model
 
 import com.squareup.moshi.Json
 import fr.tuttifruty.pokeapp.device.database.entity.PokemonEntity
+import se.ansman.kotshi.JsonDefaultValue
 import se.ansman.kotshi.JsonSerializable
 
 @JsonSerializable
@@ -41,7 +42,19 @@ data class Type(
 
 @JsonSerializable
 data class Sprites(
-    val front_default : String?
+    val front_default : String?,
+    val other: SpritesOther?
+)
+
+@JsonSerializable
+data class SpritesOther(
+    @Json(name="official-artwork")
+    val officialArtwork : SpritesOfficial?,
+)
+
+@JsonSerializable
+data class SpritesOfficial(
+    val front_default : String?,
 )
 
 fun PokemonNetwork.asEntity(): PokemonEntity {
@@ -52,6 +65,6 @@ fun PokemonNetwork.asEntity(): PokemonEntity {
         height = height,
         weight = weight,
         types = typesToString(","),
-        image = sprites.front_default?:""
+        image = sprites.other?.officialArtwork?.front_default?:""
     )
 }

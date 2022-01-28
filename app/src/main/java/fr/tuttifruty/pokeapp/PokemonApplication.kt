@@ -13,7 +13,7 @@ class PokemonApplication : Application() {
         super.onCreate()
         Timber.plant(Timber.DebugTree())
         startKoin {
-            androidLogger(Level.DEBUG)
+            androidLogger(Level.ERROR)
             androidContext(this@PokemonApplication)
             modules(appModule)
         }

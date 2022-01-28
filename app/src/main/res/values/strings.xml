@@ -1,5 +1,4 @@
 <resources>
     <string name="app_name">PokeApp</string>
-    <string name="number">No. %d</string>
-
+    <string name="number"># %s</string>
 </resources>
