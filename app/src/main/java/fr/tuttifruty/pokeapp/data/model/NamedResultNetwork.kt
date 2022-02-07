@@ -4,7 +4,7 @@ import se.ansman.kotshi.JsonSerializable
 
 @JsonSerializable
 data class NamedResultNetwork(
-    val name: String,
+    val name: String?,
     val url: String?
 ) {
     fun getIdFromUrl(): Int? {

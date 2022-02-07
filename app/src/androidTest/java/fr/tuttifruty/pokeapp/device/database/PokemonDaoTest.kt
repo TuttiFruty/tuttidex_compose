@@ -3,16 +3,14 @@ package fr.tuttifruty.pokeapp.device.database
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.room.Room
 import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.runner.AndroidJUnit4
 import fr.tuttifruty.pokeapp.device.database.dao.PokemonDao
 import fr.tuttifruty.pokeapp.device.database.entity.PokemonEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -20,13 +18,12 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 
 @ExperimentalCoroutinesApi
 class PokemonDaoTest {
     private lateinit var database: PokemonsDatabase
     private lateinit var pokemonDao: PokemonDao
-    private var testDispatcher = TestCoroutineDispatcher()
+    private var testDispatcher = StandardTestDispatcher()
 
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
@@ -44,7 +41,15 @@ class PokemonDaoTest {
             weight = id * 10,
             types = "feu",
             image = "",
-            isCaptured = isCaptured
+            isCaptured = isCaptured,
+            hp = 10,
+            attack = 20,
+            defense = 30,
+            spAttack = 40,
+            spDefense = 50,
+            speed = 60,
+            totalStat = 340,
+            species = 6,
         )
     }
 
@@ -64,7 +69,6 @@ class PokemonDaoTest {
         database.close()
 
         Dispatchers.resetMain()
-        testDispatcher.cleanupTestCoroutines()
     }
 
     @Test

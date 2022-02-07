@@ -70,7 +70,18 @@ internal class PokemonRepositoryImplTest {
             weight = id * 10,
             types = "feu",
             image = "",
-            isCaptured = false
+            isCaptured = false,
+            hp = 10,
+            attack = 20,
+            defense = 30,
+            spAttack = 40,
+            spDefense = 50,
+            speed = 60,
+            totalStat = 340,
+            species = 6,
+            imageOfCaptureBack = "/url",
+            imageOfCaptureFront = "/url",
+            description = "Fake pokemon"
         )
     }
 
@@ -82,10 +93,12 @@ internal class PokemonRepositoryImplTest {
             height = id * 10,
             weight = id * 10,
             types = listOf(
-                Type(slot = 1, type = NamedResultNetwork(name = "feu", url = null)),
-                Type(slot = 2, type = NamedResultNetwork(name = "ombre", url = null)),
+                TypeNetwork(slot = 1, type = NamedResultNetwork(name = "feu", url = null)),
+                TypeNetwork(slot = 2, type = NamedResultNetwork(name = "ombre", url = null)),
             ),
-            sprites = Sprites(front_default = "/img.png"),
+            sprites = Sprites(front_default = "/img.png", SpritesOther(SpritesOfficial("/img.png"))),
+            stats = listOf(StatNetwork(10, StatTypeNetwork("hp"))),
+            species = NamedResultNetwork("species", "species/1"),
         )
     }
 
@@ -97,8 +110,9 @@ internal class PokemonRepositoryImplTest {
 
     private val repository: PokemonRepositoryImpl
         get() = PokemonRepositoryImpl(
-            mockPokemonService,
-            mockPokemonDao,
+            pokemonService = mockPokemonService,
+            pokemonDao = mockPokemonDao,
+            emptyUrl = "empty/url"
         )
 
     @BeforeEach

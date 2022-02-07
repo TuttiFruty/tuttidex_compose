@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -70,13 +71,14 @@ fun ParentScreen(
 fun ChildScreen(
     title: String,
     navController: NavController,
+    backgroundColor : Color? =null,
     content: @Composable (PaddingValues) -> Unit
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(text = title) },
-                backgroundColor = MaterialTheme.colors.background,
+                backgroundColor = backgroundColor?:MaterialTheme.colors.background,
                 navigationIcon = {
                     IconButton(onClick = { navController.navigateUp() }) {
                         Icon(imageVector = Icons.Filled.ArrowBack, null)

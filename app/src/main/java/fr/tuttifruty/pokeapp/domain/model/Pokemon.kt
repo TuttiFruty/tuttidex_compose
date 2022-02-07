@@ -14,7 +14,11 @@ data class Pokemon(
     val baseExp: Int?,
     val height: Float?,
     val weight: Float?,
-    val isCaptured: Boolean
+    val isCaptured: Boolean,
+    val imageOfCaptureFront: String?,
+    val imageOfCaptureBack: String?,
+    val stats: List<Stat> = listOf(),
+    val description: String,
 ) : Parcelable {
     fun getNameStandardized(): String {
         return name?.replaceFirstChar { it.uppercaseChar() } ?: ""
@@ -22,6 +26,14 @@ data class Pokemon(
 
     fun getNumberStandardized(): String {
         return getNumberStandardized(this.number)
+    }
+
+    fun getWeightStandardizedIntoKg(): String {
+        return ("${weight?.div(10)} kg")
+    }
+
+    fun getHeightStandardizedIntoCm(): String {
+        return ("${height?.times(10)} cm")
     }
 
     fun getTypesAsList(): List<String>? {
@@ -51,6 +63,38 @@ data class Pokemon(
             "shadow" -> shadow
             else -> unknown
         }
+    }
+
+    sealed class Stat(
+        val label: String,
+    ) : Parcelable {
+        abstract val value: Int
+        abstract val max: Int
+
+        fun getProgress(): Float {
+            return 1f * value / max
+        }
+
+        @Parcelize
+        class HP(override val value: Int, override val max: Int) : Stat("HP")
+
+        @Parcelize
+        class Attack(override val value: Int, override val max: Int) : Stat("Attack")
+
+        @Parcelize
+        class Defense(override val value: Int, override val max: Int) : Stat("Defense")
+
+        @Parcelize
+        class SpAttack(override val value: Int, override val max: Int) : Stat("Sp. Atk")
+
+        @Parcelize
+        class SpDefense(override val value: Int, override val max: Int) : Stat("Sp. Def")
+
+        @Parcelize
+        class Speed(override val value: Int, override val max: Int) : Stat("Speed")
+
+        @Parcelize
+        class Total(override val value: Int, override val max: Int) : Stat("Total")
     }
 
     companion object {

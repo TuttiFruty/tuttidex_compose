@@ -5,6 +5,7 @@ import com.squareup.moshi.Moshi
 import fr.tuttifruty.pokeapp.BuildConfig
 import fr.tuttifruty.pokeapp.data.service.PokemonService
 import fr.tuttifruty.pokeapp.data.model.KotshiApplicationJsonAdapterFactory
+import fr.tuttifruty.pokeapp.data.service.SpeciesService
 
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
@@ -18,6 +19,7 @@ import java.util.*
 
 val serviceModule = module {
     single<PokemonService> { createWebService(BuildConfig.URL, provideClient()) }
+    single<SpeciesService> { createWebService(BuildConfig.URL, provideClient()) }
 }
 
 fun provideClient(): OkHttpClient {

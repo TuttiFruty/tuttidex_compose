@@ -16,6 +16,13 @@ val useCaseModule = module {
         )
     }
 
+    single<GetPokemonUseCase> {
+        GetPokemonUseCaseImpl(
+            get(),
+            get()
+        )
+    }
+
     single<PersistPokemonUseCase> {
         PersistPokemonUseCaseImpl(
             get()

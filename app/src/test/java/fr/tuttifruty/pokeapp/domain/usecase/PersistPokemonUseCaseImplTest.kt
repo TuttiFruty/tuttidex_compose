@@ -5,10 +5,8 @@ import fr.tuttifruty.pokeapp.domain.repository.PokemonRepository
 import fr.tuttifruty.pokeapp.domain.usecase.PersistPokemonUseCase.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -21,7 +19,7 @@ import org.mockito.MockitoAnnotations
 @ExperimentalCoroutinesApi
 internal class PersistPokemonUseCaseImplTest {
 
-    private var testDispatcher = TestCoroutineDispatcher()
+    private var testDispatcher = StandardTestDispatcher()
 
     private fun generatePokemon(id: Int): Pokemon {
         return Pokemon(
@@ -32,7 +30,11 @@ internal class PersistPokemonUseCaseImplTest {
             weight = id * 10f,
             types = "feu",
             imageUrl = "",
-            isCaptured = false
+            isCaptured = false,
+            description = "Fake pokemon",
+            imageOfCaptureFront = "front/img/of/pokemon",
+            imageOfCaptureBack = "back/img/of/pokemon",
+            stats = listOf(Pokemon.Stat.HP(10, 100))
         )
     }
 

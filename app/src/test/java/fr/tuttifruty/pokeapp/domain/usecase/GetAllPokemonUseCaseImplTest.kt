@@ -1,8 +1,5 @@
 package fr.tuttifruty.pokeapp.domain.usecase
 
-import fr.tuttifruty.pokeapp.data.repository.PokemonRepositoryImpl
-import fr.tuttifruty.pokeapp.device.database.dao.PokemonDao
-import fr.tuttifruty.pokeapp.device.database.entity.PokemonEntity
 import fr.tuttifruty.pokeapp.domain.model.Pokemon
 import fr.tuttifruty.pokeapp.domain.repository.PokemonRepository
 import kotlinx.coroutines.Dispatchers
@@ -11,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
@@ -24,7 +21,7 @@ import org.mockito.MockitoAnnotations
 @ExperimentalCoroutinesApi
 internal class GetAllPokemonUseCaseImplTest {
 
-    private var testDispatcher = TestCoroutineDispatcher()
+    private var testDispatcher = StandardTestDispatcher()
 
     private val fakeFlowOfListPokemon: Flow<List<Pokemon>> = flow {
         emit(
@@ -45,7 +42,11 @@ internal class GetAllPokemonUseCaseImplTest {
             weight = id * 10f,
             types = "feu",
             imageUrl = "",
-            isCaptured = false
+            isCaptured = false,
+            description = "Fake pokemon",
+            imageOfCaptureFront = "front/img/of/pokemon",
+            imageOfCaptureBack = "back/img/of/pokemon",
+            stats = listOf(Pokemon.Stat.HP(10, 100))
         )
     }
 

@@ -9,13 +9,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.graphics.ColorFilter.Companion.tint
@@ -32,6 +30,7 @@ import androidx.constraintlayout.compose.Dimension
 import coil.compose.rememberImagePainter
 import fr.tuttifruty.pokeapp.R
 import fr.tuttifruty.pokeapp.domain.model.Pokemon
+import fr.tuttifruty.pokeapp.ui.common.camera.CameraConstantes.Companion.EMPTY_IMAGE_URI
 import fr.tuttifruty.pokeapp.ui.theme.PokeAppTheme
 
 
@@ -161,7 +160,10 @@ fun PokemonItemPreview() {
                 123,
                 12f,
                 12f,
-                true
+                true,
+                EMPTY_IMAGE_URI.toString(),
+                EMPTY_IMAGE_URI.toString(),
+                description = "boulou",
             ),
             onCaptured = {
                 Toast.makeText(context, "Captured ${it.name}", Toast.LENGTH_SHORT).show()

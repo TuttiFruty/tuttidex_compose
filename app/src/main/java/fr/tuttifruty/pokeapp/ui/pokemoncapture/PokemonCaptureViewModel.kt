@@ -1,22 +1,22 @@
-package fr.tuttifruty.pokeapp.ui.pokemon
+package fr.tuttifruty.pokeapp.ui.pokemoncapture
 
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import fr.tuttifruty.pokeapp.domain.model.Pokemon
-import fr.tuttifruty.pokeapp.domain.usecase.GetPokemonUseCase
+import fr.tuttifruty.pokeapp.domain.usecase.GetAllPokemonUseCase
 import fr.tuttifruty.pokeapp.domain.usecase.PersistPokemonUseCase
-import fr.tuttifruty.pokeapp.ui.pokemon.PokemonViewModel.UiState.*
+import fr.tuttifruty.pokeapp.ui.pokemoncapture.PokemonCaptureViewModel.UiState.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.launch
 
-class PokemonViewModel(
+class PokemonCaptureViewModel(
     private val pokemonNumber: Int,
-    private val getPokemonUseCase: GetPokemonUseCase,
     private val persistPokemonUseCase: PersistPokemonUseCase,
+    private val getAllPokemonUseCase: GetAllPokemonUseCase,
 ) : ViewModel() {
 
     private val _uiState = mutableStateOf<UiState>(Loading)
@@ -25,13 +25,13 @@ class PokemonViewModel(
 
     init {
         viewModelScope.launch {
-            val result =
-                getPokemonUseCase(GetPokemonUseCase.PokemonToRetrieve(pokemonNumber = pokemonNumber))
+            val result = getAllPokemonUseCase(GetAllPokemonUseCase.Filters(""))
             if (result.isSuccess) {
-                result.getOrNull()?.pokemon
+                result.getOrNull()?.pokemons
                     ?.flowOn(Dispatchers.Default)
                     ?.collect {
-                        _uiState.value = Ready(it)
+                        _uiState.value =
+                            Ready(it.first { pokemon -> pokemon.number == pokemonNumber })
                     }
             } else {
                 _uiState.value = Error(result.exceptionOrNull()?.message)
@@ -40,7 +40,7 @@ class PokemonViewModel(
         }
     }
 
-    fun capturePokemon(it: Pokemon) {
+    fun capturePokemonWithPhoto(it: Pokemon) {
         viewModelScope.launch {
             persistPokemonUseCase.invoke(PersistPokemonUseCase.PokemonToUpdate(it))
         }

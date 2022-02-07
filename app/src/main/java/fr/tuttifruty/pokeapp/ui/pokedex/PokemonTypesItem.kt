@@ -1,10 +1,7 @@
 package fr.tuttifruty.pokeapp.ui.pokedex
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Surface
@@ -14,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.tuttifruty.pokeapp.ui.theme.PokeAppTheme
@@ -23,7 +21,8 @@ import fr.tuttifruty.pokeapp.ui.theme.Transparent
 @ExperimentalMaterialApi
 @Composable
 fun PokemonTypesItem(
-    types: List<String>?
+    types: List<String>?,
+    fontSize : TextUnit = 10.sp,
 ) {
     types?.forEach {
         Surface(
@@ -32,7 +31,7 @@ fun PokemonTypesItem(
         ) {
             Text(
                 text = it,
-                fontSize = 10.sp,
+                fontSize = fontSize,
                 modifier = Modifier.padding(
                     start = 8.dp,
                     end = 8.dp,
@@ -45,6 +44,7 @@ fun PokemonTypesItem(
         Spacer(
             modifier = Modifier
                 .height(2.dp)
+                .width(2.dp)
         )
     }
 }

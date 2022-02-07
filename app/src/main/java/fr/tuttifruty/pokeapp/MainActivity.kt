@@ -5,14 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.navigation.compose.rememberNavController
-import fr.tuttifruty.pokeapp.ui.pokedex.PokedexScreen
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import fr.tuttifruty.pokeapp.ui.theme.PokeAppTheme
 
 @ExperimentalMaterialApi
 @ExperimentalFoundationApi
+@ExperimentalPermissionsApi
+@ExperimentalPagerApi
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,22 +1,21 @@
 package fr.tuttifruty.pokeapp.ui.pokedex
 
-import android.content.res.Configuration
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import fr.tuttifruty.pokeapp.domain.model.Pokemon
 import fr.tuttifruty.pokeapp.ui.common.Loading
+import fr.tuttifruty.pokeapp.ui.common.ParentScreen
+import fr.tuttifruty.pokeapp.ui.common.camera.CameraConstantes.Companion.EMPTY_IMAGE_URI
 import fr.tuttifruty.pokeapp.ui.theme.PokeAppTheme
 import org.koin.androidx.compose.getViewModel
 
@@ -43,11 +42,15 @@ fun PokedexScreen(
             Toast.LENGTH_SHORT
         ).show()
         PokedexViewModel.UiState.Loading -> Loading()
-        is PokedexViewModel.UiState.Ready -> PokedexView(
-            pokemons = uiState.pokemons,
-            onCaptured = onCaptured,
-            onClicked = onClicked
-        )
+        is PokedexViewModel.UiState.Ready -> {
+            ParentScreen(title = "Pokedex") {
+                PokedexView(
+                    pokemons = uiState.pokemons,
+                    onCaptured = onCaptured,
+                    onClicked = onClicked
+                )
+            }
+        }
     }
 }
 
@@ -88,7 +91,10 @@ fun DefaultPreview() {
                     123,
                     12f,
                     12f,
-                    true
+                    true,
+                    EMPTY_IMAGE_URI.toString(),
+                    EMPTY_IMAGE_URI.toString(),
+                    description = "boulou",
                 ),
                 Pokemon(
                     1,
@@ -98,7 +104,23 @@ fun DefaultPreview() {
                     123,
                     12f,
                     12f,
-                    true
+                    true,
+                    EMPTY_IMAGE_URI.toString(),
+                    EMPTY_IMAGE_URI.toString(),
+                    description = "boulou",
+                    ),
+                Pokemon(
+                    1,
+                    "Bulvi",
+                    "",
+                    "fire",
+                    123,
+                    12f,
+                    12f,
+                    true,
+                    EMPTY_IMAGE_URI.toString(),
+                    EMPTY_IMAGE_URI.toString(),
+                    description = "boulou",
                 ),
                 Pokemon(
                     1,
@@ -108,17 +130,10 @@ fun DefaultPreview() {
                     123,
                     12f,
                     12f,
-                    true
-                ),
-                Pokemon(
-                    1,
-                    "Bulvi",
-                    "",
-                    "fire",
-                    123,
-                    12f,
-                    12f,
-                    true
+                    true,
+                    EMPTY_IMAGE_URI.toString(),
+                    EMPTY_IMAGE_URI.toString(),
+                    description = "boulou",
                 )
             ),
             onCaptured = {
