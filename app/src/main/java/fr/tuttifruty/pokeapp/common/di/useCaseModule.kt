@@ -6,26 +6,26 @@ import org.koin.dsl.module
 val useCaseModule = module {
     single<PersistAllPokemonUseCase> {
         PersistAllPokemonUseCaseImpl(
-            get()
+            pokemonRepository = get()
         )
     }
 
     single<GetAllPokemonUseCase> {
         GetAllPokemonUseCaseImpl(
-            get()
+            pokemonRepository = get()
         )
     }
 
     single<GetPokemonUseCase> {
         GetPokemonUseCaseImpl(
-            get(),
-            get()
+            pokemonRepository = get(),
+            specieRepository = get()
         )
     }
 
     single<PersistPokemonUseCase> {
         PersistPokemonUseCaseImpl(
-            get()
+            pokemonRepository = get()
         )
     }
 }

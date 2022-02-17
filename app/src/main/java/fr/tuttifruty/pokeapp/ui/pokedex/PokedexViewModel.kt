@@ -9,7 +9,8 @@ import fr.tuttifruty.pokeapp.domain.usecase.GetAllPokemonUseCase
 import fr.tuttifruty.pokeapp.domain.usecase.PersistAllPokemonUseCase
 import fr.tuttifruty.pokeapp.domain.usecase.PersistPokemonUseCase
 import fr.tuttifruty.pokeapp.domain.usecase.PersistPokemonUseCase.PokemonToUpdate
-import fr.tuttifruty.pokeapp.ui.pokedex.PokedexViewModel.UiState.*
+import fr.tuttifruty.pokeapp.ui.pokedex.PokedexViewModel.UiState.Loading
+import fr.tuttifruty.pokeapp.ui.pokedex.PokedexViewModel.UiState.Ready
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flowOn
@@ -30,17 +31,14 @@ class PokedexViewModel(
             persistAllPokemonUseCase()
         }
         viewModelScope.launch {
-            val result = getAllPokemonUseCase(GetAllPokemonUseCase.Filters(""))
-            if (result.isSuccess) {
-                result.getOrNull()?.pokemons
-                    ?.flowOn(Dispatchers.Default)
-                    ?.collect {
-                        _uiState.value = Ready(it)
-                    }
-            } else {
-                _uiState.value = Error(result.exceptionOrNull()?.message)
-            }
-
+            getAllPokemonUseCase(GetAllPokemonUseCase.Filters(""))
+                .map { result ->
+                    result.pokemons
+                        .flowOn(Dispatchers.Default)
+                        .collect {
+                            _uiState.value = Ready(it)
+                        }
+                }
         }
     }
 

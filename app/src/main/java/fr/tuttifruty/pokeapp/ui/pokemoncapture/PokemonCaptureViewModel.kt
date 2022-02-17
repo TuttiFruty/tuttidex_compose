@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import fr.tuttifruty.pokeapp.domain.model.Pokemon
-import fr.tuttifruty.pokeapp.domain.usecase.GetAllPokemonUseCase
+import fr.tuttifruty.pokeapp.domain.usecase.GetPokemonUseCase
 import fr.tuttifruty.pokeapp.domain.usecase.PersistPokemonUseCase
 import fr.tuttifruty.pokeapp.ui.pokemoncapture.PokemonCaptureViewModel.UiState.*
 import kotlinx.coroutines.Dispatchers
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 class PokemonCaptureViewModel(
     private val pokemonNumber: Int,
     private val persistPokemonUseCase: PersistPokemonUseCase,
-    private val getAllPokemonUseCase: GetAllPokemonUseCase,
+    private val getPokemonUseCase: GetPokemonUseCase,
 ) : ViewModel() {
 
     private val _uiState = mutableStateOf<UiState>(Loading)
@@ -25,18 +25,15 @@ class PokemonCaptureViewModel(
 
     init {
         viewModelScope.launch {
-            val result = getAllPokemonUseCase(GetAllPokemonUseCase.Filters(""))
-            if (result.isSuccess) {
-                result.getOrNull()?.pokemons
-                    ?.flowOn(Dispatchers.Default)
-                    ?.collect {
-                        _uiState.value =
-                            Ready(it.first { pokemon -> pokemon.number == pokemonNumber })
+            getPokemonUseCase(GetPokemonUseCase.PokemonToRetrieve(pokemonNumber = pokemonNumber)).map { result ->
+                result.pokemon
+                    .flowOn(Dispatchers.Default)
+                    .collect {
+                        _uiState.value = Ready(it)
                     }
-            } else {
-                _uiState.value = Error(result.exceptionOrNull()?.message)
+            }.mapLeft { error ->
+                _uiState.value = Error(error.message)
             }
-
         }
     }
 

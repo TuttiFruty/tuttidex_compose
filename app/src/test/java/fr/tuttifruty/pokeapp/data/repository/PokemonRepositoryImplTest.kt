@@ -1,5 +1,6 @@
 package fr.tuttifruty.pokeapp.data.repository
 
+import arrow.core.Either
 import fr.tuttifruty.pokeapp.data.model.*
 import fr.tuttifruty.pokeapp.data.service.PokemonService
 import fr.tuttifruty.pokeapp.device.database.dao.PokemonDao
@@ -11,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -20,7 +21,6 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
-import retrofit2.Response
 
 @ExperimentalCoroutinesApi
 internal class PokemonRepositoryImplTest {
@@ -29,7 +29,7 @@ internal class PokemonRepositoryImplTest {
         return Mockito.any<T>()
     }
 
-    private var testDispatcher = TestCoroutineDispatcher()
+    private var testDispatcher = StandardTestDispatcher()
     private val fakeFlowOfListPokemon: Flow<List<PokemonEntity>> = flow {
         emit(
             listOf(
@@ -96,7 +96,10 @@ internal class PokemonRepositoryImplTest {
                 TypeNetwork(slot = 1, type = NamedResultNetwork(name = "feu", url = null)),
                 TypeNetwork(slot = 2, type = NamedResultNetwork(name = "ombre", url = null)),
             ),
-            sprites = Sprites(front_default = "/img.png", SpritesOther(SpritesOfficial("/img.png"))),
+            sprites = Sprites(
+                front_default = "/img.png",
+                SpritesOther(SpritesOfficial("/img.png"))
+            ),
             stats = listOf(StatNetwork(10, StatTypeNetwork("hp"))),
             species = NamedResultNetwork("species", "species/1"),
         )
@@ -129,16 +132,20 @@ internal class PokemonRepositoryImplTest {
                 0,
                 0
             )
-        ).thenReturn(Response.success(fakeResultNetwork))
+        ).thenReturn(Either.Right(fakeResultNetwork))
         `when`(mockPokemonDao.getCountOfPokemons()).thenReturn(0)
         `when`(
             mockPokemonService.getAllPokemon(
                 fakeResultNetwork.count,
                 0
             )
-        ).thenReturn(Response.success(fakeResultNetwork))
+        ).thenReturn(Either.Right(fakeResultNetwork))
         fakeResultNetwork.results.forEach {
-            `when`(mockPokemonService.getPokemon(it.getIdFromUrl()!!)).thenReturn(Response.success(generatePokemonNetwork(it.getIdFromUrl()!!)))
+            `when`(mockPokemonService.getPokemon(it.getIdFromUrl()!!)).thenReturn(
+                Either.Right(
+                    generatePokemonNetwork(it.getIdFromUrl()!!)
+                )
+            )
         }
         `when`(mockPokemonDao.insert(any())).thenReturn(0)
 
@@ -147,7 +154,7 @@ internal class PokemonRepositoryImplTest {
         val result = repository.persistPokemons()
 
         //THEN
-        assertTrue(result.isSuccess)
+        assertTrue(result is Either.Right)
     }
 
     @Test

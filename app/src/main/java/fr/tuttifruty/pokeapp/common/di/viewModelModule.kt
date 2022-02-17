@@ -9,15 +9,25 @@ import org.koin.dsl.module
 val viewModelModule = module {
 
     // ViewModel
-    viewModel { PokedexViewModel(get(), get(), get()) }
-    viewModel { (pokemonNumber: Int) -> PokemonViewModel(
-        pokemonNumber = pokemonNumber,
-        getPokemonUseCase = get(),
-        persistPokemonUseCase = get(),
-    ) }
-    viewModel { (pokemonNumber: Int) -> PokemonCaptureViewModel(
-        pokemonNumber = pokemonNumber,
-        getAllPokemonUseCase = get(),
-        persistPokemonUseCase = get(),
-    ) }
+    viewModel {
+        PokedexViewModel(
+            persistAllPokemonUseCase = get(),
+            getAllPokemonUseCase = get(),
+            persistPokemonUseCase = get()
+        )
+    }
+    viewModel { (pokemonNumber: Int) ->
+        PokemonViewModel(
+            pokemonNumber = pokemonNumber,
+            getPokemonUseCase = get(),
+            persistPokemonUseCase = get(),
+        )
+    }
+    viewModel { (pokemonNumber: Int) ->
+        PokemonCaptureViewModel(
+            pokemonNumber = pokemonNumber,
+            getPokemonUseCase = get(),
+            persistPokemonUseCase = get(),
+        )
+    }
 }

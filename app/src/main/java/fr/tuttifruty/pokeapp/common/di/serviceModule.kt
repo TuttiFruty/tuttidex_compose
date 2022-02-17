@@ -1,12 +1,12 @@
 package fr.tuttifruty.pokeapp.common.di
 
 import android.os.Build
+import arrow.retrofit.adapter.either.EitherCallAdapterFactory
 import com.squareup.moshi.Moshi
 import fr.tuttifruty.pokeapp.BuildConfig
-import fr.tuttifruty.pokeapp.data.service.PokemonService
 import fr.tuttifruty.pokeapp.data.model.KotshiApplicationJsonAdapterFactory
+import fr.tuttifruty.pokeapp.data.service.PokemonService
 import fr.tuttifruty.pokeapp.data.service.SpeciesService
-
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -15,7 +15,6 @@ import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.IOException
-import java.util.*
 
 val serviceModule = module {
     single<PokemonService> { createWebService(BuildConfig.URL, provideClient()) }
@@ -51,6 +50,7 @@ fun provideRetrofitBuilder(url: String): Retrofit.Builder {
     val converter = provideConverter()
     return Retrofit.Builder()
         .baseUrl(url)
+        .addCallAdapterFactory(EitherCallAdapterFactory.create())
         .addConverterFactory(converter)
 }
 

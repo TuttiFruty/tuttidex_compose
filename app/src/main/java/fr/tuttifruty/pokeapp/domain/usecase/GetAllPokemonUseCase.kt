@@ -1,5 +1,6 @@
 package fr.tuttifruty.pokeapp.domain.usecase
 
+import arrow.core.Either
 import fr.tuttifruty.pokeapp.domain.UseCase
 import fr.tuttifruty.pokeapp.domain.model.Pokemon
 import fr.tuttifruty.pokeapp.domain.repository.PokemonRepository
@@ -10,8 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 
-interface GetAllPokemonUseCase : UseCase<Filters, Result<Pokemons>> {
-
+interface GetAllPokemonUseCase : UseCase<Filters, Either<Nothing, Pokemons>> {
     data class Filters(
         val filter: String
     ) : UseCase.InputValues
@@ -25,10 +25,9 @@ class GetAllPokemonUseCaseImpl(
     private val pokemonRepository: PokemonRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : GetAllPokemonUseCase {
-    override suspend fun invoke(input: Filters?): Result<Pokemons> {
+    override suspend fun invoke(input: Filters?): Either<Nothing, Pokemons> {
         return withContext(dispatcher) {
-            Result.success(Pokemons(pokemonRepository.getPokemons()))
+            Either.Right(Pokemons(pokemonRepository.getPokemons()))
         }
     }
-
 }

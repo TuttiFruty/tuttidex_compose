@@ -25,18 +25,16 @@ class PokemonViewModel(
 
     init {
         viewModelScope.launch {
-            val result =
-                getPokemonUseCase(GetPokemonUseCase.PokemonToRetrieve(pokemonNumber = pokemonNumber))
-            if (result.isSuccess) {
-                result.getOrNull()?.pokemon
-                    ?.flowOn(Dispatchers.Default)
-                    ?.collect {
-                        _uiState.value = Ready(it)
-                    }
-            } else {
-                _uiState.value = Error(result.exceptionOrNull()?.message)
-            }
-
+            getPokemonUseCase(GetPokemonUseCase.PokemonToRetrieve(pokemonNumber = pokemonNumber))
+                .map { result ->
+                    result.pokemon
+                        .flowOn(Dispatchers.Default)
+                        .collect {
+                            _uiState.value = Ready(it)
+                        }
+                }.mapLeft { error ->
+                    Error(error.message)
+                }
         }
     }
 

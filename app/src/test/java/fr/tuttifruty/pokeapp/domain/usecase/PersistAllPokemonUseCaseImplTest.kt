@@ -1,13 +1,12 @@
 package fr.tuttifruty.pokeapp.domain.usecase
 
-import fr.tuttifruty.pokeapp.domain.model.Pokemon
+import arrow.core.Either
+import arrow.core.merge
 import fr.tuttifruty.pokeapp.domain.repository.PokemonRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -20,7 +19,7 @@ import org.mockito.MockitoAnnotations
 @ExperimentalCoroutinesApi
 internal class PersistAllPokemonUseCaseImplTest {
 
-    private var testDispatcher = TestCoroutineDispatcher()
+    private var testDispatcher = StandardTestDispatcher()
 
     @Mock
     private lateinit var mockPokemonRepository: PokemonRepository
@@ -39,13 +38,13 @@ internal class PersistAllPokemonUseCaseImplTest {
     @Test
     fun `calling useCase should send back succeed result when repo succeed `() = runBlocking {
         //GIVEN
-        Mockito.`when`(mockPokemonRepository.persistPokemons()).thenReturn(Result.success(0))
+        Mockito.`when`(mockPokemonRepository.persistPokemons()).thenReturn(Either.Right(0))
 
         //WHEN
         val result = useCase()
-        val bodyResult = result.getOrNull()
+        val bodyResult = result.orNull()
         //THEN
-        assertTrue(result.isSuccess)
+        assertTrue(result is Either.Right)
         assertNull(bodyResult)
     }
 
@@ -53,16 +52,15 @@ internal class PersistAllPokemonUseCaseImplTest {
     fun `calling useCase should send back failed result when repo failed `() = runBlocking {
         //GIVEN
         Mockito.`when`(mockPokemonRepository.persistPokemons()).thenReturn(
-            Result.failure(
-                PersistAllPokemonUseCase.Errors.FailedToPersistAllPokemons()
+            Either.Left(
+                PersistAllPokemonUseCase.FailedToPersistAllPokemons()
             )
         )
 
         //WHEN
         val result = useCase()
-        val bodyResult = result.exceptionOrNull()
         //THEN
-        assertTrue(result.isFailure)
-        assertTrue(bodyResult is PersistAllPokemonUseCase.Errors.FailedToPersistAllPokemons)
+        assertTrue(result is Either.Left)
+        assertTrue(result.merge() is PersistAllPokemonUseCase.FailedToPersistAllPokemons)
     }
 }

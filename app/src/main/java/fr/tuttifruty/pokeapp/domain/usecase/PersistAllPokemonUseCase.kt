@@ -1,39 +1,31 @@
 package fr.tuttifruty.pokeapp.domain.usecase
 
+import arrow.core.Either
 import fr.tuttifruty.pokeapp.domain.UseCase
 import fr.tuttifruty.pokeapp.domain.repository.PokemonRepository
-import fr.tuttifruty.pokeapp.domain.usecase.PersistAllPokemonUseCase.*
+import fr.tuttifruty.pokeapp.domain.usecase.PersistAllPokemonUseCase.PersistAllPokemonUseCaseErrors
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 
 
-interface PersistAllPokemonUseCase : UseCase<Nothing?, Result<Nothing?>> {
-    sealed class Errors(
-        message: String
-    ) : Throwable(message = message) {
-        class FailedToPersistAllPokemons :
-            Errors(message = "Failed to persist all pokemons")
-    }
+interface PersistAllPokemonUseCase :
+    UseCase<Nothing?, Either<PersistAllPokemonUseCaseErrors, Nothing?>> {
+
+    sealed interface PersistAllPokemonUseCaseErrors : UseCase.Errors
+    class FailedToPersistAllPokemons(override val message: String = "An error occurred during save process") :
+        PersistAllPokemonUseCaseErrors
 }
-
-
-
 
 class PersistAllPokemonUseCaseImpl(
     private val pokemonRepository: PokemonRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : PersistAllPokemonUseCase {
-    override suspend fun invoke(input: Nothing?): Result<Nothing?> {
+    override suspend fun invoke(input: Nothing?): Either<PersistAllPokemonUseCaseErrors, Nothing?> {
         return withContext(dispatcher) {
-            val result = pokemonRepository.persistPokemons()
-            if (result.isSuccess) {
-                Result.success(null)
-            } else {
-                Result.failure(Errors.FailedToPersistAllPokemons())
-            }
+            pokemonRepository.persistPokemons()
+                .map { null }
+                .mapLeft { errors -> errors as PersistAllPokemonUseCaseErrors }
         }
     }
 }

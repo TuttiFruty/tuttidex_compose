@@ -1,5 +1,6 @@
 package fr.tuttifruty.pokeapp.domain.usecase
 
+import arrow.core.Either
 import fr.tuttifruty.pokeapp.domain.model.Pokemon
 import fr.tuttifruty.pokeapp.domain.repository.PokemonRepository
 import kotlinx.coroutines.Dispatchers
@@ -10,9 +11,8 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.setMain
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
-
 import org.junit.jupiter.api.Test
 import org.mockito.Mock
 import org.mockito.Mockito
@@ -65,19 +65,20 @@ internal class GetAllPokemonUseCaseImplTest {
     }
 
     @Test
-    fun `calling useCase should send back succeed result with a Flow of a list of Pokemon`() = runBlocking{
-        //GIVEN
-        val fakeInput = null
-        Mockito.`when`(mockPokemonRepository.getPokemons()).thenReturn(fakeFlowOfListPokemon)
+    fun `calling useCase should send back succeed result with a Flow of a list of Pokemon`() =
+        runBlocking {
+            //GIVEN
+            val fakeInput = null
+            Mockito.`when`(mockPokemonRepository.getPokemons()).thenReturn(fakeFlowOfListPokemon)
 
-        //WHEN
-        val result = useCase(fakeInput)
-        val bodyResult = result.getOrNull()
-        //THEN
-        assertTrue(result.isSuccess)
-
-        bodyResult!!.pokemons.collect { listPokemon ->
-            assertTrue(listPokemon.isNotEmpty())
+            //WHEN
+            val result = useCase(fakeInput)
+            //THEN
+            result.orNull()
+                ?.pokemons
+                ?.collect { listPokemon ->
+                    assertTrue(listPokemon.isNotEmpty())
+                }
+            assertTrue(result is Either.Right)
         }
-    }
 }
