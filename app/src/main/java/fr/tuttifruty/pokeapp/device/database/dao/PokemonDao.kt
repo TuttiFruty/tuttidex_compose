@@ -15,7 +15,7 @@ interface PokemonDao {
     fun insert(pokemon: PokemonEntity): Long
 
     @Update(onConflict = REPLACE)
-    fun update(pokemon: PokemonEntity): PokemonEntity
+    fun update(pokemon: PokemonEntity): Int
 
     @Query("SELECT * FROM pokemon_table ORDER BY id ASC")
     fun getAllPokemon(): Flow<List<PokemonEntity>>

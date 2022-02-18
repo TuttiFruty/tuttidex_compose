@@ -9,6 +9,6 @@ interface PokemonRepository {
     suspend fun persistPokemons(): Either<UseCase.Errors, Int>
     fun getPokemons(): Flow<List<Pokemon>>
     fun getPokemon(numberPokemon: Int): Flow<Pokemon?>
-    suspend fun updatePokemon(pokemon: Pokemon): Pokemon?
+    suspend fun updatePokemon(pokemon: Pokemon): Int?
     suspend fun hasPokemonSpecieInformation(numberPokemon: Int): Boolean
 }

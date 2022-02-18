@@ -5,8 +5,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
@@ -34,12 +32,12 @@ fun BaseStatsSection(pokemon: Pokemon) {
 @Composable
 private fun StatsTable(stats: List<Pokemon.Stat>) {
 
-    LazyColumn(
+    Column(
         Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        items(stats) { stats ->
+        stats.forEach { stat ->
             var progress by remember { mutableStateOf(0f) }
             val progressAnimDuration = 5500
             val animatedProgress by animateFloatAsState(
@@ -56,7 +54,7 @@ private fun StatsTable(stats: List<Pokemon.Stat>) {
             ) {
                 Text(
                     modifier = Modifier.weight(0.2f, fill = true),
-                    text = stats.label,
+                    text = stat.label,
                     style = MaterialTheme.typography.body2.copy(
                         color = Teal700
                     )
@@ -65,7 +63,7 @@ private fun StatsTable(stats: List<Pokemon.Stat>) {
                 Text(
                     modifier = Modifier.weight(0.1f, fill = true),
                     color = Color.Black,
-                    text = stats.value.toString(),
+                    text = stat.value.toString(),
                     style = MaterialTheme.typography.body2.copy(
                         fontWeight = FontWeight.Bold
                     )
@@ -80,8 +78,8 @@ private fun StatsTable(stats: List<Pokemon.Stat>) {
 
             }
             Spacer(modifier = Modifier.height(10.dp))
-            LaunchedEffect(stats.getProgress()) {
-                progress = stats.getProgress()
+            LaunchedEffect(stat.getProgress()) {
+                progress = stat.getProgress()
             }
         }
     }
@@ -109,13 +107,13 @@ fun PokemonViewPreview() {
                 EMPTY_IMAGE_URI.toString(),
                 EMPTY_IMAGE_URI.toString(),
                 listOf(
-                    Pokemon.Stat.HP(10,10),
-                    Pokemon.Stat.Attack(10,10),
-                    Pokemon.Stat.Defense(10,10),
-                    Pokemon.Stat.SpAttack(10,10),
-                    Pokemon.Stat.SpDefense(10,10),
-                    Pokemon.Stat.Speed(10,10),
-                    Pokemon.Stat.Total(60,60)
+                    Pokemon.Stat.HP(10, 10),
+                    Pokemon.Stat.Attack(10, 10),
+                    Pokemon.Stat.Defense(10, 10),
+                    Pokemon.Stat.SpAttack(10, 10),
+                    Pokemon.Stat.SpDefense(10, 10),
+                    Pokemon.Stat.Speed(10, 10),
+                    Pokemon.Stat.Total(60, 60)
                 ),
                 "boulou",
             )

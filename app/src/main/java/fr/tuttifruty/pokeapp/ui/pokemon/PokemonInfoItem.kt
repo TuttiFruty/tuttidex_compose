@@ -3,19 +3,23 @@ package fr.tuttifruty.pokeapp.ui.pokemon
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.pager.*
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.pagerTabIndicatorOffset
+import com.google.accompanist.pager.rememberPagerState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import fr.tuttifruty.pokeapp.domain.model.Pokemon
 import fr.tuttifruty.pokeapp.ui.common.camera.CameraConstantes.Companion.EMPTY_IMAGE_URI
@@ -25,7 +29,13 @@ import kotlinx.coroutines.launch
 
 @ExperimentalPagerApi
 @Composable
-fun PokemonInfoItem(modifier: Modifier = Modifier, pokemon: Pokemon) {
+fun PokemonInfoItem(
+    modifier: Modifier = Modifier,
+    pokemon: Pokemon,
+    tabRowHeight: Dp = 74.dp,
+    tabRowTopTitlePadding: Dp = 24.dp,
+    contentHeight: Dp = 360.dp,
+) {
 
     val scope = rememberCoroutineScope()
     val pagerState = rememberPagerState()
@@ -36,18 +46,14 @@ fun PokemonInfoItem(modifier: Modifier = Modifier, pokemon: Pokemon) {
         SectionItem.Moves(pokemon),
     )
 
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .fillMaxHeight(),
-    ) {
+    Column(modifier = modifier) {
         TabRow(
             selectedTabIndex = pagerState.currentPage,
             backgroundColor = Color.White,
             contentColor = Color.Black,
-            modifier = Modifier.clip(
-                shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
-            ),
+            modifier = Modifier
+                .height(tabRowHeight)
+                .clip(shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)),
             divider = {},
             indicator = { tabPositions ->
                 TabRowDefaults.Indicator(
@@ -64,29 +70,25 @@ fun PokemonInfoItem(modifier: Modifier = Modifier, pokemon: Pokemon) {
                     },
                 ) {
                     Text(
-                        modifier = Modifier.padding(vertical = 16.dp),
+                        modifier = Modifier.padding(top = tabRowTopTitlePadding),
                         text = tab.title
                     )
                 }
             }
         }
 
-        TabsContent(
+        HorizontalPager(
+            verticalAlignment = Alignment.Top,
             modifier = Modifier
+                .height(contentHeight)
                 .background(Color.White),
-            tabs = listOfSections,
-            pagerState = pagerState,
-        )
+            state = pagerState,
+            count = listOfSections.size,
+        ) { page ->
+            listOfSections[page].screen()
+        }
     }
 
-}
-
-@ExperimentalPagerApi
-@Composable
-fun TabsContent(modifier: Modifier = Modifier, tabs: List<SectionItem>, pagerState: PagerState) {
-    HorizontalPager(modifier = modifier, state = pagerState, count = tabs.size) { page ->
-        tabs[page].screen()
-    }
 }
 
 @ExperimentalPagerApi

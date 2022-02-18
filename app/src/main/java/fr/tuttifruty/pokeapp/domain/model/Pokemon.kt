@@ -2,6 +2,7 @@ package fr.tuttifruty.pokeapp.domain.model
 
 import android.os.Parcelable
 import androidx.compose.ui.graphics.Color
+import fr.tuttifruty.pokeapp.ui.common.camera.CameraConstantes
 import fr.tuttifruty.pokeapp.ui.theme.*
 import kotlinx.parcelize.Parcelize
 
@@ -64,6 +65,13 @@ data class Pokemon(
             else -> unknown
         }
     }
+
+    fun hasNotPicture(): Boolean =
+        this.imageOfCaptureFront == CameraConstantes.EMPTY_IMAGE_URI.toString()
+                || this.imageOfCaptureBack == CameraConstantes.EMPTY_IMAGE_URI.toString()
+                || this.imageOfCaptureFront == null
+                || this.imageOfCaptureBack == null
+
 
     sealed class Stat(
         val label: String,

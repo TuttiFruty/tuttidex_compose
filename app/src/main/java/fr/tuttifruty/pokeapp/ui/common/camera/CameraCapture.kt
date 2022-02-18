@@ -1,14 +1,13 @@
 package fr.tuttifruty.pokeapp.ui.common.camera
 
-import android.content.Intent
-import android.net.Uri
-import android.provider.Settings
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCapture.CAPTURE_MODE_MINIMIZE_LATENCY
 import androidx.camera.core.Preview
 import androidx.camera.core.UseCase
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -16,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
-import androidx.compose.ui.unit.dp
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import fr.tuttifruty.pokeapp.ui.common.Permission
 import fr.tuttifruty.pokeapp.ui.common.executor
@@ -34,22 +32,7 @@ fun CameraCapture(
 ) {
     val context = LocalContext.current
 
-    Permission(
-        permissionNotAvailableContent = {
-            Column {
-                Text(text = "Need permissions to take photo of pokemon !")
-                Spacer(modifier = Modifier.height(8.dp))
-                Button(onClick = {
-                    context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                        data =
-                            Uri.fromParts("package", context.packageName, null)
-                    })
-                }) {
-                    Text(text = "Open Settings")
-                }
-            }
-        }
-    ) {
+    Permission {
         Box(modifier = modifier) {
             val lifecycleOwner = LocalLifecycleOwner.current
             val coroutineScope = rememberCoroutineScope()

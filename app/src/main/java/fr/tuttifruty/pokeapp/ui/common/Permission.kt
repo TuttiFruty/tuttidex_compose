@@ -1,11 +1,11 @@
 package fr.tuttifruty.pokeapp.ui.common
 
-import androidx.compose.material.AlertDialog
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.PermissionRequired
+import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
 
 @ExperimentalPermissionsApi
@@ -17,31 +17,19 @@ fun Permission(
     content: @Composable () -> Unit = {},
 ) {
     val permissionState = rememberPermissionState(permission = permission)
-    PermissionRequired(
-        permissionState = permissionState,
-        permissionNotGrantedContent = {
-            Rationale(
-                text = rationale
-            ) { permissionState.launchPermissionRequest() }
-        },
-        permissionNotAvailableContent = permissionNotAvailableContent,
-        content = content
-    )
-}
-
-@Composable
-private fun Rationale(
-    text: String = "",
-    onRequestPermission: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = { /* Nothing to do */ },
-        title = { Text(text = "Permission request") },
-        text = { Text(text = text) },
-        confirmButton = {
-            Button(onClick = onRequestPermission) {
-                Text(text = "Sure !")
+    when (permissionState.status) {
+        PermissionStatus.Granted -> {
+            content.invoke()
+        }
+        is PermissionStatus.Denied -> {
+            Column {
+                Text("Need permissions to take photo of pokemon !")
+                Button(onClick = {
+                    permissionState.launchPermissionRequest()
+                }) {
+                    Text("Request permission")
+                }
             }
         }
-    )
+    }
 }

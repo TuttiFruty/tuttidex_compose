@@ -1,29 +1,28 @@
 package fr.tuttifruty.pokeapp.ui.pokemon
 
+import android.content.res.Configuration
 import android.widget.Toast
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
 import coil.compose.rememberImagePainter
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -96,117 +95,268 @@ fun PokemonView(
     onClicked: (Pokemon) -> Unit,
     onCaptured: (Pokemon) -> Unit,
 ) {
-    ConstraintLayout(
+    val configuration = LocalConfiguration.current
+    when (configuration.orientation) {
+        Configuration.ORIENTATION_LANDSCAPE -> {
+            ComposeLandscape(pokemon, onClicked, onCaptured)
+        }
+        else -> {
+            ComposePortrait(pokemon, onClicked, onCaptured)
+        }
+    }
+}
+
+@ExperimentalPagerApi
+@ExperimentalPermissionsApi
+@ExperimentalFoundationApi
+@ExperimentalMaterialApi
+@Composable
+fun ComposeLandscape(
+    pokemon: Pokemon,
+    onClicked: (Pokemon) -> Unit,
+    onCaptured: (Pokemon) -> Unit
+) {
+    Surface(
         modifier = Modifier
-            .fillMaxHeight()
             .fillMaxWidth()
-//            .clickable { onClicked(pokemon) }
-            .background(pokemon.getColor())
+            .fillMaxHeight(),
+        color = pokemon.getColor()
     ) {
-        val (decoration, pokeballDecoration, imagePokemon, pokemonInfo, takePhoto, pokeball, types) = createRefs()
-
-        Surface(
+        Box(
             modifier = Modifier
-                .width(150.dp)
-                .height(150.dp)
-                .graphicsLayer {
-                    rotationZ = -20f
-                }
-                .constrainAs(decoration) {
-                    top.linkTo(parent.top, margin = -(50.dp))
-                    start.linkTo(parent.start, margin = -(60.dp))
-                },
-            color = Transparent,
-            shape = RoundedCornerShape(32.dp)
-        ) {}
-
-        RotateForEver(
-            modifier = Modifier
-                .constrainAs(pokeballDecoration) {
-                    bottom.linkTo(imagePokemon.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }, duration = 4000
+                .verticalScroll(enabled = true, state = rememberScrollState())
         ) {
-            Image(
+            Surface(
                 modifier = Modifier
-                    .size(150.dp)
-                    .alpha(0.25f),
-                painter = painterResource(id = R.drawable.ic_pokeball_empty),
-                colorFilter = ColorFilter.tint(Color.White),
-                contentDescription = null,
+                    .align(Alignment.TopStart)
+                    .offset(x = (-60).dp, y = (-50).dp)
+                    .width(150.dp)
+                    .height(150.dp)
+                    .graphicsLayer {
+                        rotationZ = -20f
+                    },
+                color = Transparent,
+                shape = RoundedCornerShape(32.dp)
+            ) {}
+
+            PokemonInfoItem(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(start = 300.dp, top = 8.dp)
+                    .fillMaxHeight(), pokemon = pokemon,
+                contentHeight = 242.dp,
+                tabRowHeight = 40.dp,
+                tabRowTopTitlePadding = 0.dp
             )
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(top = 50.dp)
+                    .size(200.dp)
+            ) {
+                RotateForEver(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(top = 10.dp), duration = 4000
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .size(150.dp)
+                            .alpha(0.25f),
+                        painter = painterResource(id = R.drawable.ic_pokeball_empty),
+                        colorFilter = ColorFilter.tint(Color.White),
+                        contentDescription = null,
+                    )
+                }
+
+                Image(
+                    painter = rememberImagePainter(pokemon.imageUrl),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(128.dp)
+                        .align(Alignment.BottomCenter)
+                )
+
+                Image(
+                    painter = painterResource(
+                        if (pokemon.isCaptured) {
+                            R.drawable.ic_pokeball
+                        } else {
+                            R.drawable.ic_pokeball_empty
+                        }
+                    ),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(32.dp)
+                        .align(Alignment.CenterEnd)
+                        .padding(top = 60.dp)
+                        .clip(CircleShape)
+                        .clickable {
+                            onCaptured(pokemon)
+                        }
+
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(top = 64.dp, start = 130.dp)
+
+            ) {
+                PokemonTypesItem(types = pokemon.getTypesAsList(), fontSize = 16.sp)
+            }
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(top = 20.dp, start = 130.dp)
+                    .size(32.dp)
+                    .clickable {
+                        onClicked(pokemon)
+                    }
+            ) {
+                Image(
+                    painter = painterResource(
+                        if (pokemon.hasNotPicture()) {
+                            R.drawable.ic_baseline_add_a_photo_24
+                        } else {
+                            R.drawable.ic_baseline_photo_camera_24
+                        }
+                    ),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth()
+                )
+            }
         }
+    }
+}
 
-        PokemonInfoItem(modifier = Modifier
-            .constrainAs(pokemonInfo) {
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                top.linkTo(types.bottom, margin = 8.dp)
-            }, pokemon = pokemon
-        )
-
-        Image(
-            painter = rememberImagePainter(pokemon.imageUrl),
-            contentDescription = null,
+@ExperimentalPagerApi
+@ExperimentalPermissionsApi
+@ExperimentalFoundationApi
+@ExperimentalMaterialApi
+@Composable
+private fun ComposePortrait(
+    pokemon: Pokemon,
+    onClicked: (Pokemon) -> Unit,
+    onCaptured: (Pokemon) -> Unit
+) {
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
+        color = pokemon.getColor()
+    ) {
+        Box(
             modifier = Modifier
-                .size(128.dp)
-                .constrainAs(imagePokemon) {
-                    top.linkTo(parent.top, margin = 64.dp)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                }
-        )
-
-        Row(
-            modifier = Modifier
-                .constrainAs(types) {
-                    top.linkTo(imagePokemon.bottom, margin = 16.dp)
-                    start.linkTo(parent.start, margin = 32.dp)
-                }
+                .verticalScroll(enabled = true, state = rememberScrollState())
         ) {
-            PokemonTypesItem(types = pokemon.getTypesAsList(), fontSize = 16.sp)
+            Surface(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .offset(x = (-60).dp, y = (-50).dp)
+                    .width(150.dp)
+                    .height(150.dp)
+                    .graphicsLayer {
+                        rotationZ = -20f
+                    },
+                color = Transparent,
+                shape = RoundedCornerShape(32.dp)
+            ) {}
+
+            PokemonInfoItem(
+                modifier = Modifier
+                    .padding(top = 250.dp)
+                    .fillMaxSize(), pokemon = pokemon
+            )
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 80.dp)
+                    .size(200.dp)
+            ) {
+                RotateForEver(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .padding(top = 10.dp), duration = 4000
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .size(150.dp)
+                            .alpha(0.25f),
+                        painter = painterResource(id = R.drawable.ic_pokeball_empty),
+                        colorFilter = ColorFilter.tint(Color.White),
+                        contentDescription = null,
+                    )
+                }
+
+                Image(
+                    painter = rememberImagePainter(pokemon.imageUrl),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(128.dp)
+                        .align(Alignment.BottomCenter)
+                )
+
+                Image(
+                    painter = painterResource(
+                        if (pokemon.isCaptured) {
+                            R.drawable.ic_pokeball
+                        } else {
+                            R.drawable.ic_pokeball_empty
+                        }
+                    ),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(32.dp)
+                        .align(Alignment.CenterEnd)
+                        .padding(top = 60.dp)
+                        .clip(CircleShape)
+                        .clickable {
+                            onCaptured(pokemon)
+                        }
+
+                )
+            }
+
+            Row(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 64.dp, end = 32.dp)
+
+            ) {
+                PokemonTypesItem(types = pokemon.getTypesAsList(), fontSize = 16.sp)
+            }
+
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(top = 90.dp, start = 64.dp)
+                    .size(32.dp)
+                    .clickable {
+                        onClicked(pokemon)
+                    }
+            ) {
+                Image(
+                    painter = painterResource(
+                        if (pokemon.hasNotPicture()) {
+                            R.drawable.ic_baseline_add_a_photo_24
+                        } else {
+                            R.drawable.ic_baseline_photo_camera_24
+                        }
+                    ),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .fillMaxWidth()
+                )
+            }
         }
-
-        Image(
-            painter = painterResource(
-                if (pokemon.isCaptured) {
-                    R.drawable.ic_pokeball
-                } else {
-                    R.drawable.ic_pokeball_empty
-                }
-            ),
-            contentDescription = null,
-            modifier = Modifier
-                .size(32.dp)
-                .offset(x = 10.dp, y = 10.dp)
-                .constrainAs(pokeball) {
-                    end.linkTo(imagePokemon.end)
-                    bottom.linkTo(imagePokemon.bottom)
-                }
-                .clip(CircleShape)
-                .clickable {
-                    onCaptured(pokemon)
-                }
-
-        )
-
-        Image(
-            painter = painterResource(
-                R.drawable.ic_baseline_add_a_photo_24
-            ),
-            contentDescription = null,
-            modifier = Modifier
-                .size(32.dp)
-                .constrainAs(takePhoto) {
-                    top.linkTo(parent.top, margin = 16.dp)
-                    end.linkTo(parent.end, margin = 16.dp)
-                }
-                .clickable {
-                    onClicked(pokemon)
-                }
-
-        )
     }
 }
 

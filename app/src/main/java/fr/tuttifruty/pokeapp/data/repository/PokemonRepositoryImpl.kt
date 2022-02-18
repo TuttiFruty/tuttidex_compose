@@ -60,7 +60,7 @@ class PokemonRepositoryImpl(
         pokemonDao.getPokemonAsFlow(numberPokemon).map { it?.asDomainModel() }
 
 
-    override suspend fun updatePokemon(pokemon: Pokemon): Pokemon? = withContext(dispatcher) {
+    override suspend fun updatePokemon(pokemon: Pokemon): Int? = withContext(dispatcher) {
         pokemonDao.getPokemon(pokemon.number)
             ?.run {
                 tryToDeleteFiles(pokemon, this)
@@ -72,7 +72,6 @@ class PokemonRepositoryImpl(
                     )
                 )
             }
-            ?.asDomainModel()
     }
 
     override suspend fun hasPokemonSpecieInformation(numberPokemon: Int): Boolean =

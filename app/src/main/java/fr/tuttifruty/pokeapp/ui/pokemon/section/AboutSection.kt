@@ -30,7 +30,7 @@ fun AboutSection(pokemon: Pokemon) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight()
+                .wrapContentHeight()
                 .padding(horizontal = 32.dp)
         ) {
             Text(
@@ -46,9 +46,9 @@ fun AboutSection(pokemon: Pokemon) {
                 elevation = 4.dp,
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .height(108.dp)
+                    .height(140.dp)
                     .fillMaxWidth()
-                    .padding(top = 16.dp),
+                    .padding(top = 16.dp, bottom = 32.dp),
                 shape = RoundedCornerShape(16.dp),
             ) {
                 Row(

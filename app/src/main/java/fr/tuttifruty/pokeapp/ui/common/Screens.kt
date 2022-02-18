@@ -56,9 +56,10 @@ fun ParentScreen(
         },
         bottomBar = {
             BottomAppBar (
-                modifier = Modifier.height(bottomBarHeight)
-                    .offset{
-                           IntOffset(x = 0, y = -bottomBarOffsetHeightPx.value.roundToInt())
+                modifier = Modifier
+                    .height(bottomBarHeight)
+                    .offset {
+                        IntOffset(x = 0, y = -bottomBarOffsetHeightPx.value.roundToInt())
                     },
                 backgroundColor = MaterialTheme.colors.primary
                 ){}
@@ -80,7 +81,7 @@ fun ChildScreen(
                 title = { Text(text = title) },
                 backgroundColor = backgroundColor?:MaterialTheme.colors.background,
                 navigationIcon = {
-                    IconButton(onClick = { navController.navigateUp() }) {
+                    IconButton(onClick = { navController.popBackStack() }) {
                         Icon(imageVector = Icons.Filled.ArrowBack, null)
                     }
                 },
