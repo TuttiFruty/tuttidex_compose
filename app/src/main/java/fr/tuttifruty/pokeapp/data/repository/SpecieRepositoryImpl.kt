@@ -13,19 +13,18 @@ class SpecieRepositoryImpl(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
 ) : SpecieRepository {
     override suspend fun tryToPersistSpecieInformationForPokemon(pokemonNumber: Int) {
-        withContext(dispatcher){
-            pokemonDao.getPokemon(pokemonNumber)?.run {
-                if(this.species != null) {
-                    val responseSpecieNetwork = speciesService.getSpeciesForPokemon(this.species)
-                    if(responseSpecieNetwork.isSuccessful){
-                        val resultSpecieNetwork = responseSpecieNetwork.body()
-                        val description =
-                            resultSpecieNetwork?.flavorTextEntries?.firstOrNull { it.language?.name == "en" && it.version?.name == "black" }?.flavorText
-                            ?:"No description available"
-
-                        val reworkerDescription = description.replace("\\n".toRegex(), " ")
-                        val pokemonUpdated = this.copy(description = reworkerDescription)
-                        pokemonDao.update(pokemonUpdated)
+        withContext(dispatcher) {
+            pokemonDao.getPokemon(pokemonNumber)?.apply {
+                this.species?.let { speciesId ->
+                    speciesService.getSpeciesForPokemon(speciesId).map { specieData ->
+                        pokemonDao.update(
+                            this.copy(
+                                description = specieData.flavorTextEntries
+                                    .firstOrNull { it.language?.name == "en" && it.version?.name == "black" }
+                                    ?.flavorText
+                                    ?: "No description available"
+                                        .replace("\\n".toRegex(), " ")
+                            ))
                     }
                 }
             }

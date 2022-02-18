@@ -28,16 +28,15 @@ class PersistPokemonUseCaseImpl(
     private val pokemonRepository: PokemonRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : PersistPokemonUseCase {
-    override suspend fun invoke(input: PokemonToUpdate?): Either<PersistPokemonUseCaseErrors, Nothing?> {
-        return withContext(dispatcher) {
+    override suspend fun invoke(input: PokemonToUpdate?): Either<PersistPokemonUseCaseErrors, Nothing?> =
+        withContext(dispatcher) {
             if (input != null) {
                 when (pokemonRepository.updatePokemon(input.pokemon)) {
-                    1 -> Either.Right(null)
-                    else -> Either.Left(FailedToPersistPokemon())
+                    null -> Either.Left(FailedToPersistPokemon())
+                    else -> Either.Right(null)
                 }
             } else {
                 Either.Left(PokemonToPersistMustExist())
             }
         }
-    }
 }

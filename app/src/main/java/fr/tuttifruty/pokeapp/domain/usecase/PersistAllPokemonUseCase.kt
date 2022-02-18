@@ -21,11 +21,10 @@ class PersistAllPokemonUseCaseImpl(
     private val pokemonRepository: PokemonRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : PersistAllPokemonUseCase {
-    override suspend fun invoke(input: Nothing?): Either<PersistAllPokemonUseCaseErrors, Nothing?> {
-        return withContext(dispatcher) {
+    override suspend fun invoke(input: Nothing?): Either<PersistAllPokemonUseCaseErrors, Nothing?> =
+        withContext(dispatcher) {
             pokemonRepository.persistPokemons()
                 .map { null }
                 .mapLeft { errors -> errors as PersistAllPokemonUseCaseErrors }
         }
-    }
 }

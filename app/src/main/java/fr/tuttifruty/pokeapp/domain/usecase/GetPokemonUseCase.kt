@@ -1,6 +1,7 @@
 package fr.tuttifruty.pokeapp.domain.usecase
 
 import arrow.core.Either
+import arrow.core.Validated
 import fr.tuttifruty.pokeapp.domain.UseCase
 import fr.tuttifruty.pokeapp.domain.model.Pokemon
 import fr.tuttifruty.pokeapp.domain.repository.PokemonRepository
@@ -33,21 +34,16 @@ class GetPokemonUseCaseImpl(
     private val specieRepository: SpecieRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : GetPokemonUseCase {
-    override suspend fun invoke(input: PokemonToRetrieve?): Either<GetPokemonUseCaseErrors, Pokemons> {
-        return withContext(dispatcher) {
-            if (input != null) {
-                if (!pokemonRepository.hasPokemonSpecieInformation(input.pokemonNumber)) {
-                    specieRepository.tryToPersistSpecieInformationForPokemon(input.pokemonNumber)
+    override suspend fun invoke(input: PokemonToRetrieve?): Either<GetPokemonUseCaseErrors, Pokemons> =
+        withContext(dispatcher) {
+            Validated.fromNullable(input) {
+                PokemonToRetrieveMustBeGiven()
+            }.map { inputNotNull ->
+                if (!pokemonRepository.hasPokemonSpecieInformation(inputNotNull.pokemonNumber)) {
+                    specieRepository.tryToPersistSpecieInformationForPokemon(inputNotNull.pokemonNumber)
                 }
-                Either.Right(
-                    Pokemons(
-                        pokemonRepository.getPokemon(input.pokemonNumber).filterNotNull()
-                    )
-                )
-            } else {
-                Either.Left(PokemonToRetrieveMustBeGiven())
-            }
+                Pokemons(pokemonRepository.getPokemon(inputNotNull.pokemonNumber).filterNotNull())
+            }.toEither()
         }
-    }
 
 }

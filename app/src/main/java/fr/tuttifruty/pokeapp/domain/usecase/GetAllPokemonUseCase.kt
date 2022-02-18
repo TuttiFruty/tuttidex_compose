@@ -25,9 +25,8 @@ class GetAllPokemonUseCaseImpl(
     private val pokemonRepository: PokemonRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.Default
 ) : GetAllPokemonUseCase {
-    override suspend fun invoke(input: Filters?): Either<Nothing, Pokemons> {
-        return withContext(dispatcher) {
+    override suspend fun invoke(input: Filters?): Either<Nothing, Pokemons> =
+        withContext(dispatcher) {
             Either.Right(Pokemons(pokemonRepository.getPokemons()))
         }
-    }
 }

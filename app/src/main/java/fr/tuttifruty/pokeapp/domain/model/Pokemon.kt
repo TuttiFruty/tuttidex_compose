@@ -71,9 +71,7 @@ data class Pokemon(
         abstract val value: Int
         abstract val max: Int
 
-        fun getProgress(): Float {
-            return 1f * value / max
-        }
+        fun getProgress(): Float = if (max > 0) (1f.times(value)).div(max) else 0f
 
         @Parcelize
         class HP(override val value: Int, override val max: Int) : Stat("HP")
